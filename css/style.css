@@ -1,3 +1,36 @@
-.logo{
+* {
+    font-family: 'Lato', sans-serif;
+}
+
+.logo {
     width: 268px;   
+}
+
+.main-search .search-container {
+    height: 69px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #E7E7E7;
+    border-radius: 5px;
+}
+
+.main-search .input-search {
+    opacity: 0.25;
+}
+
+.main-search .input-search:focus { 
+    opacity: 1
+}
+
+.main-search .input-search, .main-search .input-search:focus {
+    border: none;
+    outline:none;
+    background-color: transparent;
+    box-shadow: none;
+    font-size: 18px;
+}
+
+.main-search .fa-search {
+    font-size: 32px;
 }
