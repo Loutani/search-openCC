@@ -75,3 +75,58 @@
     color: white;
     background-color: #3282F7;
 }
+
+.dishe-time {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.fw-700 {
+    font-weight: 700;
+}
+
+.fm-roboto {
+    font-family: 'Roboto', sans-serif;
+}
+
+.fs-12 {
+    font-size: 12px;
+}
+
+.ln-14 {
+    line-height: 14px;
+}
+
+.dishe-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.dishe-ingredients {
+    display: flex;
+}
+
+.dishe-ingredients-list, .dishe-description {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.dishe-ingredients-list {
+    flex-basis: 45%
+}
+
+.dishe-description {
+    flex-basis: 55%
+}
+
+.dishe-image-container {
+    max-height: 178px;
+    min-height: 178px;
+    overflow: hidden;
+}
+
+.dishe-container {
+    background-color: #E7E7E7;
+}
