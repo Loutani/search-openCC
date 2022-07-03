@@ -34,3 +34,26 @@
 .main-search .fa-search {
     font-size: 32px;
 }
+
+.search-filter, .drop-down-filter {
+    display: flex;
+    flex-direction: row;
+}
+
+.drop-down-primary, .drop-down-success, .drop-down-danger {
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.drop-down-primary {
+    background-color: #3282F7
+}
+
+.drop-down-success {
+    background-color: #68D9A4
+}
+
+.drop-down-danger {
+    background-color: #ED6454
+}
