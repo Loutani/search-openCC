@@ -57,3 +57,21 @@
 .drop-down-danger {
     background-color: #ED6454
 }
+
+.search-filter-tags, .search-filter-tag {
+    display: flex;
+    flex-direction: row;
+}
+
+.search-filter-tag {
+    border-radius: 5px;
+}
+
+.search-filter-tag i {
+    cursor: pointer;
+}
+
+.search-filter-tag-primary {
+    color: white;
+    background-color: #3282F7;
+}
