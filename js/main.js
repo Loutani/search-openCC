@@ -1,20 +1,43 @@
 import dishes from './../data/recipes.js';
 
+let filters = {
+    ingredients : [],
+    appareils   : [],
+    ustensiles  : [],
+}
 
 let dishesTemplate = createDishesTemplate();
 
 renderDishes(dishesTemplate);
 
-//show all the dishes (render)
+//create dishes template
 function createDishesTemplate() {
 
-    let dishesTemplate = ``;
-
+    let dishesTemplate = ``,
+        ingredientsTempFilters = [],
+        appareilsTempFilters = [],
+        ustensilesTempFilters = [];
+    
+    //loop through all the dishes to create dishes template
     dishes.forEach(dish => {
 
         let dishIngredientTemplate = ``;
 
+        //push the appliance to filter list
+        appareilsTempFilters.push(dish.appliance.toLowerCase());
+
+        //push the ustensil to filter list
+        dish.ustensils.forEach(ustensil => {
+            ustensilesTempFilters.push(ustensil.toLowerCase())
+        });
+
+        //loop through all the dish ingredients to create template for it
         dish.ingredients.forEach(ingredient => {
+
+            //push the ingredient to filter list
+            ingredientsTempFilters.push(ingredient.ingredient.toLowerCase())
+
+            //create ingredients template
             dishIngredientTemplate += `<p class="fs-12 ln-14 mb-0">
                                             <strong>
                                                 ${ingredient.ingredient}
@@ -26,6 +49,7 @@ function createDishesTemplate() {
                                         </p>`
         });
 
+        //create dishes template
         dishesTemplate += `<div class="col-4">
                         <div class="row">
                             <div class="col-12 dishe-image-container">
@@ -56,10 +80,15 @@ function createDishesTemplate() {
                     </div>`
     });
 
+    //remove the repetition of ingredient, appareils and ustensiles using Set
+    filters.ingredients = new Set(ingredientsTempFilters);
+    filters.appareils   = new Set(appareilsTempFilters);
+    filters.ustensiles  = new Set(ustensilesTempFilters);
+
     return dishesTemplate;
 }
 
-//render the dishes template
+//render the dishes content
 function renderDishes(dishesTemplate) {
     document.querySelector('.dishes').innerHTML = dishesTemplate;
 }
