@@ -130,3 +130,7 @@
 .dishe-container {
     background-color: #E7E7E7;
 }
+
+.img-fluid {
+    width: 100%;
+}
