@@ -35,9 +35,21 @@
     font-size: 32px;
 }
 
-.search-filter, .drop-down-filter {
+.search-filter {
     display: flex;
     flex-direction: row;
+}
+
+.drop-down-filter-search {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.drop-down-filter {
+    display: flex;
+    flex-direction: column;
+    max-height: 56px;
 }
 
 .drop-down-primary, .drop-down-success, .drop-down-danger {

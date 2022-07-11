@@ -50,7 +50,7 @@ function createDishesTemplate() {
         });
 
         //create dishes template
-        dishesTemplate += `<div class="col-4">
+        dishesTemplate += `<div class="col-sm-6 col-lg-4">
                         <div class="row">
                             <div class="col-12 dishe-image-container">
                                 <img class="img-fluid" src="/assets/images/${dish.id}.jpg" alt="${dish.name}">
@@ -91,4 +91,31 @@ function createDishesTemplate() {
 //render the dishes content
 function renderDishes(dishesTemplate) {
     document.querySelector('.dishes').innerHTML = dishesTemplate;
+
+    fixDishContentHeight()
 }
+
+//fix dish content height
+function fixDishContentHeight() {
+    let dishesContent = document.querySelectorAll('.dishe-container'),
+        dishesContentHeight = [];
+
+    dishesContent.forEach(item => {
+        dishesContentHeight.push(item.clientHeight)
+    });
+
+    let max = dishesContentHeight.sort( (a, b) => b - a)[0]
+
+    dishesContent.forEach(item => {
+        item.style.height = `${max}px`
+    });
+}
+
+//fix dishes content height when resize the window
+window.addEventListener('resize', function(){
+    document.querySelectorAll('.dishe-container').forEach(item => {
+        item.removeAttribute('style')
+    });
+
+    fixDishContentHeight()
+});
