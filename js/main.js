@@ -120,35 +120,59 @@ window.addEventListener('resize', function(){
     fixDishContentHeight()
 });
 
+//open or close ingredient drop down filter
 document.querySelector('.drop-down-filter.drop-down-primary').addEventListener('click', function(e) {
+    //check if the clicked element is up arrow icon to close drop down
     if(this.classList.contains('active') && e.target === this.querySelector('.fa-chevron-up')) {
         this.classList.remove('active')
         this.querySelector('input').value = ''
     }else{
+        //show the click drop down element and hide the other
         this.classList.add('active');
         document.querySelector('.drop-down-filter.drop-down-success').classList.remove('active');
         document.querySelector('.drop-down-filter.drop-down-danger').classList.remove('active');
     }
 });
 
+//open or close Appareils drop down filter
 document.querySelector('.drop-down-filter.drop-down-success').addEventListener('click', function(e) {
+    //check if the clicked element is up arrow icon to close drop down
     if(this.classList.contains('active') && e.target === this.querySelector('.fa-chevron-up')) {
         this.classList.remove('active')
         this.querySelector('input').value = ''
     }else{
+        //show the click drop down element and hide the other
         this.classList.add('active');
         document.querySelector('.drop-down-filter.drop-down-primary').classList.remove('active');
         document.querySelector('.drop-down-filter.drop-down-danger').classList.remove('active');
     }
 });
 
+//open or close Ustensiles drop down filter
 document.querySelector('.drop-down-filter.drop-down-danger').addEventListener('click', function(e) {
+    //check if the clicked element is up arrow icon to close drop down
     if(this.classList.contains('active') && e.target === this.querySelector('.fa-chevron-up')) {
         this.classList.remove('active')
         this.querySelector('input').value = ''
     }else{
+        //show the click drop down element and hide the other
         this.classList.add('active');
         document.querySelector('.drop-down-filter.drop-down-success').classList.remove('active');
         document.querySelector('.drop-down-filter.drop-down-primary').classList.remove('active');
+    }
+});
+
+//close the drop down menu when click outside of it
+window.addEventListener('click', function(e){
+    if(
+        e.target.closest('.drop-down-filter') !== document.querySelector('.drop-down-filter.drop-down-primary')
+        && 
+        e.target.closest('.drop-down-filter') !== document.querySelector('.drop-down-filter.drop-down-success')
+        &&
+        e.target.closest('.drop-down-filter') !== document.querySelector('.drop-down-filter.drop-down-danger')
+    ) {
+        document.querySelectorAll('.drop-down-filter.active').forEach(item => {
+            item.classList.remove('active')
+        })
     }
 });
