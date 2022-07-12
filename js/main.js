@@ -85,6 +85,11 @@ function createDishesTemplate() {
     filters.appareils   = new Set(appareilsTempFilters);
     filters.ustensiles  = new Set(ustensilesTempFilters);
 
+    //render the drop down search filter content
+    renderDropDownSearchFilterTemplate(filters.ingredients, document.querySelector('.drop-down-filter.drop-down-primary .drop-down-filter-content'))
+    renderDropDownSearchFilterTemplate(filters.appareils, document.querySelector('.drop-down-filter.drop-down-success .drop-down-filter-content'))
+    renderDropDownSearchFilterTemplate(filters.ustensiles, document.querySelector('.drop-down-filter.drop-down-danger .drop-down-filter-content'))
+
     return dishesTemplate;
 }
 
@@ -189,6 +194,7 @@ window.addEventListener('click', function(e){
     }
 });
 
+//empty drop down search text except given name element
 function emptyDropDownSearchText(exceptElement) {
     if(exceptElement !== "ingredients") {
         document.querySelector('.drop-down-filter.drop-down-primary input').value = ""
@@ -202,4 +208,54 @@ function emptyDropDownSearchText(exceptElement) {
     if(exceptElement !== "ustensiles") {
         document.querySelector('.drop-down-filter.drop-down-danger input').value = ""
     }
+}
+
+//render drop down search filter
+function renderDropDownSearchFilterTemplate(data, element) {
+    let dropDownSearchTextTemplate = ``,
+        pattern = 'primary';
+
+        if(element === document.querySelector('.drop-down-filter.drop-down-success .drop-down-filter-content')) {
+            pattern = 'success'
+        }
+
+        if(element === document.querySelector('.drop-down-filter.drop-down-danger .drop-down-filter-content')) {
+            pattern = 'danger'
+        }
+
+    //cast type 'Set' to 'Array' using spread operator
+    data = [...data]
+
+    data.forEach((filter, index) => {
+        dropDownSearchTextTemplate += `<div><p data-type="${pattern}" class="clickable mb-0 py-2 px-2" id="${pattern}-${index}">${filter}</p></div>`
+    })
+
+    element.innerHTML = dropDownSearchTextTemplate
+}
+
+//add click on drop down filter element
+document.querySelectorAll('.clickable').forEach(clickable => {
+    clickable.addEventListener('click', function(e) {
+
+        renderClickDropDownFilterAsTag(this);
+
+        this.closest('div').classList.add('hidden');
+
+    });
+});
+
+//render clicked drop down filter as tag
+function renderClickDropDownFilterAsTag(element) {
+    //create template
+    let template = `<div class="search-filter-tag px-2 py-1 search-filter-tag-${element.getAttribute('data-type')} me-1">
+                        <div class="search-filter-tag-title me-2">
+                            ${element.innerText}
+                        </div>
+                        <div class="search-filter-tag-icon">
+                            <i class="far fa-times-circle" for-id="${element.id}"></i>
+                        </div>
+                    </div>`
+
+    //append the tag to tags list
+    document.querySelector('.search-filter-tags').innerHTML += template;
 }
