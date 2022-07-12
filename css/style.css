@@ -231,7 +231,9 @@
     width: 100%;
 }
 
-.drop-down-primary.active, .drop-down-success.active, .drop-down-danger.active {
+.drop-down-primary.active,
+.drop-down-success.active,
+.drop-down-danger.active {
     cursor: default;
 }
 
