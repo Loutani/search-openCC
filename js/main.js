@@ -24,18 +24,22 @@ function createDishesTemplate() {
         let dishIngredientTemplate = ``;
 
         //push the appliance to filter list
-        appareilsTempFilters.push(dish.appliance.toLowerCase());
+        let tempAppliance = dish.appliance.toLowerCase();
+
+        appareilsTempFilters.push(tempAppliance.charAt(0).toUpperCase() + tempAppliance.slice(1));
 
         //push the ustensil to filter list
         dish.ustensils.forEach(ustensil => {
-            ustensilesTempFilters.push(ustensil.toLowerCase())
+            let tempUstensil = ustensil.toLowerCase()
+            ustensilesTempFilters.push(tempUstensil.charAt(0).toUpperCase() + tempUstensil.slice(1))
         });
 
         //loop through all the dish ingredients to create template for it
         dish.ingredients.forEach(ingredient => {
 
             //push the ingredient to filter list
-            ingredientsTempFilters.push(ingredient.ingredient.toLowerCase())
+            let tempIngredient = ingredient.ingredient.toLowerCase()
+            ingredientsTempFilters.push(tempIngredient.charAt(0).toUpperCase() + tempIngredient.slice(1))
 
             //create ingredients template
             dishIngredientTemplate += `<p class="fs-12 ln-14 mb-0">
