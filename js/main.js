@@ -122,10 +122,13 @@ window.addEventListener('resize', function(){
 
 //open or close ingredient drop down filter
 document.querySelector('.drop-down-filter.drop-down-primary').addEventListener('click', function(e) {
+
+    emptyDropDownSearchText('ingredients');
+
     //check if the clicked element is up arrow icon to close drop down
     if(this.classList.contains('active') && e.target === this.querySelector('.fa-chevron-up')) {
-        this.classList.remove('active')
-        this.querySelector('input').value = ''
+        this.classList.remove('active');
+        this.querySelector('input').value = "";
     }else{
         //show the click drop down element and hide the other
         this.classList.add('active');
@@ -136,10 +139,13 @@ document.querySelector('.drop-down-filter.drop-down-primary').addEventListener('
 
 //open or close Appareils drop down filter
 document.querySelector('.drop-down-filter.drop-down-success').addEventListener('click', function(e) {
+
+    emptyDropDownSearchText('appareils');
+
     //check if the clicked element is up arrow icon to close drop down
     if(this.classList.contains('active') && e.target === this.querySelector('.fa-chevron-up')) {
-        this.classList.remove('active')
-        this.querySelector('input').value = ''
+        this.classList.remove('active');
+        this.querySelector('input').value = "";
     }else{
         //show the click drop down element and hide the other
         this.classList.add('active');
@@ -150,10 +156,13 @@ document.querySelector('.drop-down-filter.drop-down-success').addEventListener('
 
 //open or close Ustensiles drop down filter
 document.querySelector('.drop-down-filter.drop-down-danger').addEventListener('click', function(e) {
+
+    emptyDropDownSearchText('ustensiles');
+
     //check if the clicked element is up arrow icon to close drop down
     if(this.classList.contains('active') && e.target === this.querySelector('.fa-chevron-up')) {
-        this.classList.remove('active')
-        this.querySelector('input').value = ''
+        this.classList.remove('active');
+        this.querySelector('input').value = "";
     }else{
         //show the click drop down element and hide the other
         this.classList.add('active');
@@ -171,8 +180,26 @@ window.addEventListener('click', function(e){
         &&
         e.target.closest('.drop-down-filter') !== document.querySelector('.drop-down-filter.drop-down-danger')
     ) {
+
+        emptyDropDownSearchText('');
+
         document.querySelectorAll('.drop-down-filter.active').forEach(item => {
             item.classList.remove('active')
         })
     }
 });
+
+function emptyDropDownSearchText(exceptElement) {
+    if(exceptElement !== "ingredients") {
+        document.querySelector('.drop-down-filter.drop-down-primary input').value = ""
+    }
+
+    if(exceptElement !== "appareils") {
+        document.querySelector('.drop-down-filter.drop-down-success input').value = ""
+    }
+
+
+    if(exceptElement !== "ustensiles") {
+        document.querySelector('.drop-down-filter.drop-down-danger input').value = ""
+    }
+}
