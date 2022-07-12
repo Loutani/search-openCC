@@ -153,6 +153,7 @@
     top: 52px;
     left: 0;
     z-index: 999999999;
+    border-radius: 0px 0px 5px 5px;
 }
 
 .drop-down-filter.active .drop-down-filter-content {
@@ -198,6 +199,7 @@
 
 .drop-down-filter-icon .fa-chevron-up {
     display: none;
+    cursor: pointer;
 }
 
 .drop-down-filter-title input::placeholder {
@@ -207,4 +209,8 @@
 
 .drop-down-filter-title {
     width: 100%;
+}
+
+.drop-down-primary.active, .drop-down-success.active, .drop-down-danger.active {
+    cursor: default;
 }
