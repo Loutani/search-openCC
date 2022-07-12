@@ -258,17 +258,20 @@ function renderClickDropDownFilterAsTag(element) {
 
     //append the tag to tags list
     document.querySelector('.search-filter-tags').innerHTML += template;
+}
 
-    //add click on remove tag
-    document.querySelector(`.search-filter-tags #${element.id} i`).addEventListener('click', function(e) {
-        let pattern = this.getAttribute('pattern'),
-            id = this.getAttribute('for-id');
+//remove the tag when click on close
+window.addEventListener('click', function(e){
+    
+    //if the clicked element contain the tag close clicked
+    if(e.target.classList.contains('fa-times-circle')) {
+        let pattern = e.target.getAttribute('pattern'),
+            id = e.target.getAttribute('for-id');
 
         //get the original click filter from drop down
         document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('hidden');
 
         //remove the clicked tag
-        this.closest('.search-filter-tag').remove()
-    });
-
-}
+        e.target.closest('.search-filter-tag').remove()
+    }
+});
