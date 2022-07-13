@@ -194,7 +194,13 @@ window.addEventListener('click', function(e){
 
         document.querySelectorAll('.drop-down-filter.active').forEach(item => {
             item.classList.remove('active')
-        })
+        });
+
+        document.querySelectorAll('.drop-down-filter.drop-down-danger .drop-down-filter-content div').forEach(item => {
+            if(!item.classList.contains('tagged')) {
+                item.classList.remove('hidden')
+            }
+        });
     }
 });
 
@@ -244,6 +250,7 @@ document.querySelectorAll('.clickable').forEach(clickable => {
         renderClickDropDownFilterAsTag(this);
 
         this.closest('div').classList.add('hidden');
+        this.closest('div').classList.add('tagged');
 
     });
 });
@@ -274,8 +281,42 @@ window.addEventListener('click', function(e){
 
         //get the original click filter from drop down
         document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('hidden');
+        document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('tagged');
 
         //remove the clicked tag
         e.target.closest('.search-filter-tag').remove()
     }
 });
+
+document.querySelector('.drop-down-filter-input-search-ingredient').addEventListener('keyup', function(e) {
+    
+});
+
+document.querySelector('.drop-down-filter-input-search-appareil').addEventListener('keyup', function(e) {
+    
+});
+
+document.querySelector('.drop-down-filter-input-search-ustensile').addEventListener('keyup', function(e) {
+    if(e.target.value === "") {
+        document.querySelectorAll('.drop-down-filter.drop-down-danger .drop-down-filter-content div').forEach(item => {
+            if(!item.classList.contains('tagged')) {
+                item.classList.remove('hidden')
+            }
+        });
+    }else{
+        renderDropDrownFilterOnSearch(e)
+    }
+});
+
+function renderDropDrownFilterOnSearch(element) {
+    document.querySelectorAll('.drop-down-filter.drop-down-danger .drop-down-filter-content div:not(.tagged) .clickable').forEach(item => {
+
+        let itemText = item.innerText;
+
+        if(itemText.toLowerCase().indexOf(element.target.value) < 0 && itemText.indexOf(element.target.value) < 0) {
+            item.closest('div').classList.add('hidden')
+        }else{
+            item.closest('div').classList.remove('hidden')
+        }
+    });
+}
