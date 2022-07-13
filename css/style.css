@@ -65,7 +65,7 @@
 
 .search-filter-tags, .search-filter-tag {
     display: flex;
-    flex-direction: row;
+    flex-flow: wrap;
 }
 
 .search-filter-tag {
