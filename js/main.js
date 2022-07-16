@@ -4,20 +4,38 @@ let filters = {
     ingredients : [],
     appareils   : [],
     ustensiles  : [],
-}
+},
+chosenFilters = {
+    ingredients : [],
+    appareils   : [],
+    ustensiles  : [],
+};
 
-let dishesTemplate = createDishesTemplate();
+let dishesTemplate = createDishesAndFiltersTemplate(dishes);
 
 renderDishes(dishesTemplate);
 
-//create dishes template
-function createDishesTemplate() {
+//create dishes template and render the drop down filter search
+function createDishesAndFiltersTemplate(dishes) {
 
+    //remove the repetition of ingredient, appareils and ustensiles using Set
+    let dishesTemplate = createDishesTemplates(dishes);
+
+    //render the drop down search filter content
+    renderDropDownSearchFilterTemplate(filters.ingredients, document.querySelector('.drop-down-filter.drop-down-primary .drop-down-filter-content'))
+    renderDropDownSearchFilterTemplate(filters.appareils, document.querySelector('.drop-down-filter.drop-down-success .drop-down-filter-content'))
+    renderDropDownSearchFilterTemplate(filters.ustensiles, document.querySelector('.drop-down-filter.drop-down-danger .drop-down-filter-content'))
+
+    return dishesTemplate;
+}
+
+//create dishes Templates
+function createDishesTemplates(dishes) {
     let dishesTemplate = ``,
-        ingredientsTempFilters = [],
-        appareilsTempFilters = [],
-        ustensilesTempFilters = [];
-    
+    ingredientsTempFilters = [],
+    appareilsTempFilters = [],
+    ustensilesTempFilters = [];
+
     //loop through all the dishes to create dishes template
     dishes.forEach(dish => {
 
@@ -84,17 +102,10 @@ function createDishesTemplate() {
                     </div>`
     });
 
-    //remove the repetition of ingredient, appareils and ustensiles using Set
     filters.ingredients = new Set(ingredientsTempFilters);
-    filters.appareils   = new Set(appareilsTempFilters);
-    filters.ustensiles  = new Set(ustensilesTempFilters);
-
-    //render the drop down search filter content
-    renderDropDownSearchFilterTemplate(filters.ingredients, document.querySelector('.drop-down-filter.drop-down-primary .drop-down-filter-content'))
-    renderDropDownSearchFilterTemplate(filters.appareils, document.querySelector('.drop-down-filter.drop-down-success .drop-down-filter-content'))
-    renderDropDownSearchFilterTemplate(filters.ustensiles, document.querySelector('.drop-down-filter.drop-down-danger .drop-down-filter-content'))
-
-    return dishesTemplate;
+    filters.appareils = new Set(appareilsTempFilters);
+    filters.ustensiles = new Set(ustensilesTempFilters);
+    return dishesTemplate
 }
 
 //render the dishes content
@@ -235,21 +246,24 @@ function emptyDropDownSearchText(exceptElement) {
 //render drop down search filter
 function renderDropDownSearchFilterTemplate(data, element) {
     let dropDownSearchTextTemplate = ``,
-        pattern = 'primary';
+        pattern = 'primary',
+        searchIn = 'ingredients';
 
         if(element === document.querySelector('.drop-down-filter.drop-down-success .drop-down-filter-content')) {
-            pattern = 'success'
+            pattern = 'success';
+            searchIn = 'appareils'
         }
 
         if(element === document.querySelector('.drop-down-filter.drop-down-danger .drop-down-filter-content')) {
-            pattern = 'danger'
+            pattern = 'danger';
+            searchIn = 'ustensiles'
         }
 
     //cast type 'Set' to 'Array' using spread operator
     data = [...data]
 
     data.forEach((filter, index) => {
-        dropDownSearchTextTemplate += `<div><p data-type="${pattern}" class="clickable mb-0 py-2" id="${pattern}-${index}">${filter}</p></div>`
+        dropDownSearchTextTemplate += `<div><p data-type="${pattern}" data-search-in="${searchIn}" class="clickable mb-0 py-2" id="${pattern}-${index}">${filter}</p></div>`
     })
 
     element.innerHTML = dropDownSearchTextTemplate
@@ -259,11 +273,14 @@ function renderDropDownSearchFilterTemplate(data, element) {
 document.querySelectorAll('.clickable').forEach(clickable => {
     clickable.addEventListener('click', function(e) {
 
+        let searchIn = e.target.getAttribute('data-search-in');
+
         renderClickDropDownFilterAsTag(this);
+
+        updateDropDownFilters(searchIn, this.innerText);
 
         this.closest('div').classList.add('hidden');
         this.closest('div').classList.add('tagged');
-
     });
 });
 
@@ -275,7 +292,7 @@ function renderClickDropDownFilterAsTag(element) {
                             ${element.innerText}
                         </div>
                         <div class="search-filter-tag-icon btn-remove-tag">
-                            <i class="far fa-times-circle" pattern="${element.getAttribute('data-type')}" for-id="${element.id}"></i>
+                            <i class="far fa-times-circle" pattern="${element.getAttribute('data-type')}" data-search-in="${element.getAttribute('data-search-in')}" for-id="${element.id}"></i>
                         </div>
                     </div>`
 
@@ -289,14 +306,23 @@ window.addEventListener('click', function(e){
     //if the clicked element contain the tag close clicked
     if(e.target.classList.contains('fa-times-circle')) {
         let pattern = e.target.getAttribute('pattern'),
-            id = e.target.getAttribute('for-id');
-
+            id = e.target.getAttribute('for-id'),
+            searchIn = e.target.getAttribute('data-search-in'),
+            tagContent = e.target.closest('.search-filter-tag').querySelector('.search-filter-tag-title').innerText.trim();
+        
         //get the original click filter from drop down
         document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('hidden');
         document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('tagged');
 
         //remove the clicked tag
-        e.target.closest('.search-filter-tag').remove()
+        e.target.closest('.search-filter-tag').remove();
+
+        //remove the tag from chosen filter
+        let tagIndexInChosenFilters = chosenFilters[searchIn].indexOf(tagContent);
+
+        if(tagIndexInChosenFilters > -1) {
+            chosenFilters[e.target.getAttribute('data-search-in')].splice(tagIndexInChosenFilters, 1)
+        }
     }
 });
 
@@ -336,4 +362,88 @@ function renderDropDrownFilterOnSearch(element, type) {
             item.closest('div').classList.remove('hidden')
         }
     });
+}
+
+function updateDropDownFilters(searchFilterKey, contentText) {
+
+    chosenFilters[searchFilterKey].push(contentText)
+
+    let newDishes = updateDishesData();
+
+    let newDishesTemplate = createDishesTemplates(newDishes);
+
+    renderDishes(newDishesTemplate);
+}
+
+//create new dishes array from filtred ingredient, appareils and ustensiles
+function updateDishesData() {
+
+    let dishesFromFilter = [];
+
+    dishes.forEach(dish => {
+        let dishIngredients = dish.ingredients,
+            dishAppareils = dish.appliance,
+            dishUstensiles = dish.ustensils;
+
+        //dish had all the ingredients, appareils and ustensiles
+        if(
+            dishContainFiltredIngredients(dishIngredients) && 
+            dishContainFiltredAppareils(dishAppareils) && 
+            dishContainFiltredUstensiles(dishUstensiles)
+        ) {
+            dishesFromFilter.push(dish)
+        }
+    });
+
+    return dishesFromFilter
+}
+
+//check if the filter ingredient is in dish ingredients
+function dishContainFiltredIngredients(dishIngredients) {
+    let foundedIngredient = [];
+
+    for(let ingredientIndex = 0; ingredientIndex < dishIngredients.length; ingredientIndex++) {
+        for(let filtersIngredientIndex = 0; filtersIngredientIndex < chosenFilters['ingredients'].length; filtersIngredientIndex++) {
+            if(dishIngredients[ingredientIndex].ingredient.toLowerCase() === chosenFilters.ingredients[filtersIngredientIndex].toLowerCase()) {
+                foundedIngredient.push(dishIngredients[ingredientIndex].ingredient);
+                break;
+            }
+        }
+    }
+
+
+    return foundedIngredient.length === chosenFilters.ingredients.length
+}
+
+//check if the filter appareils is in dish appareils
+function dishContainFiltredAppareils(dishAppareils) {
+    let foundAppareils = false;
+
+    if(chosenFilters.appareils.length === 0) {
+        return true;
+    }
+    
+    for(let ingredientIndex = 0; ingredientIndex < dishAppareils.length; ingredientIndex++) {
+        if(chosenFilters.appareils === dishAppareils[ingredientIndex]) {
+            foundAppareils = true
+        }
+    }
+
+    return foundAppareils
+}
+
+//check if the ustensiles is in  dish ustensiles
+function dishContainFiltredUstensiles(dishUstensiles) {
+    let foundedUstensiles = [];
+
+    for(let ingredientIndex = 0; ingredientIndex < dishUstensiles.length; ingredientIndex++) {
+        for(let ustensileIndex; ustensileIndex < chosenFilters.ustensiles.length; ustensileIndex++) {
+            if(chosenFilters.ustensiles[ustensileIndex] === dishUstensiles[ingredientIndex]) {
+                foundedUstensiles.push(dishUstensiles[ingredientIndex]);
+                break;
+            }
+        }
+    }
+
+    return foundedUstensiles.length === chosenFilters.ustensiles.length
 }
