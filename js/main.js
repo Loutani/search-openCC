@@ -335,9 +335,13 @@ function updateDropDownFilters(searchFilterKey, contentText) {
 
     chosenFilters[searchFilterKey].push(contentText)
 
-    let newDishes = updateDishesData();
+    newDishes = updateDishesData();
 
-    //let newDishesTemplate = createDishesTemplates(newDishes);
+    let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase());
+
+    let newDishesTemplate = createDishesTemplates(searchResult);
+
+    renderDishes(newDishesTemplate);
 }
 
 //create new dishes array from filtred ingredient, appareils and ustensiles
