@@ -196,6 +196,18 @@ window.addEventListener('click', function(e){
             item.classList.remove('active')
         });
 
+        document.querySelectorAll('.drop-down-filter.drop-down-primary .drop-down-filter-content div').forEach(item => {
+            if(!item.classList.contains('tagged')) {
+                item.classList.remove('hidden')
+            }
+        });
+
+        document.querySelectorAll('.drop-down-filter.drop-down-success .drop-down-filter-content div').forEach(item => {
+            if(!item.classList.contains('tagged')) {
+                item.classList.remove('hidden')
+            }
+        });
+
         document.querySelectorAll('.drop-down-filter.drop-down-danger .drop-down-filter-content div').forEach(item => {
             if(!item.classList.contains('tagged')) {
                 item.classList.remove('hidden')
@@ -288,28 +300,33 @@ window.addEventListener('click', function(e){
     }
 });
 
-document.querySelector('.drop-down-filter-input-search-ingredient').addEventListener('keyup', function(e) {
-    
-});
+//ingredient filter
+document.querySelector('.drop-down-filter-input-search-ingredient').addEventListener('keyup', filter);
 
-document.querySelector('.drop-down-filter-input-search-appareil').addEventListener('keyup', function(e) {
-    
-});
+//appareil filter
+document.querySelector('.drop-down-filter-input-search-appareil').addEventListener('keyup', filter);
 
-document.querySelector('.drop-down-filter-input-search-ustensile').addEventListener('keyup', function(e) {
+//ustensile filter
+document.querySelector('.drop-down-filter-input-search-ustensile').addEventListener('keyup', filter);
+
+//do filter for drop down filter search
+function filter(e) {
+    let type = e.target.getAttribute('data-search');
+
     if(e.target.value === "") {
-        document.querySelectorAll('.drop-down-filter.drop-down-danger .drop-down-filter-content div').forEach(item => {
+        document.querySelectorAll(`.drop-down-filter.drop-down-${type} .drop-down-filter-content div`).forEach(item => {
             if(!item.classList.contains('tagged')) {
                 item.classList.remove('hidden')
             }
         });
     }else{
-        renderDropDrownFilterOnSearch(e)
+        renderDropDrownFilterOnSearch(e, type)
     }
-});
+}
 
-function renderDropDrownFilterOnSearch(element) {
-    document.querySelectorAll('.drop-down-filter.drop-down-danger .drop-down-filter-content div:not(.tagged) .clickable').forEach(item => {
+//render the drop down filter search when we have search
+function renderDropDrownFilterOnSearch(element, type) {
+    document.querySelectorAll(`.drop-down-filter.drop-down-${type} .drop-down-filter-content div:not(.tagged) .clickable`).forEach(item => {
 
         let itemText = item.innerText;
 
