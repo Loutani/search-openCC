@@ -24,20 +24,10 @@ window.addEventListener('resize', function(){
     fixDishContentHeight()
 });
 
-//open or close ingredient drop down filter
-document.querySelector('.drop-down-filter.drop-down-primary').addEventListener('click', function(e) {
+//open or close drop down filter
+document.querySelectorAll('.drop-down-filter.drop-down-primary, .drop-down-filter.drop-down-success, .drop-down-filter.drop-down-danger').forEach(dropDown => dropDown.addEventListener('click', function(e) {
     toggleDropDownFilter(e, this)
-});
-
-//open or close Appareils drop down filter
-document.querySelector('.drop-down-filter.drop-down-success').addEventListener('click', function(e) {
-    toggleDropDownFilter(e, this)
-});
-
-//open or close Ustensiles drop down filter
-document.querySelector('.drop-down-filter.drop-down-danger').addEventListener('click', function(e) {
-    toggleDropDownFilter(e, this)
-});
+}));
 
 //close the drop down menu when click outside of it
 window.addEventListener('click', function(e){
@@ -116,14 +106,8 @@ window.addEventListener('click', function(e){
     }
 });
 
-//ingredient filter
-document.querySelector('.drop-down-filter-input-search-ingredient').addEventListener('keyup', filter);
-
-//appareil filter
-document.querySelector('.drop-down-filter-input-search-appareil').addEventListener('keyup', filter);
-
-//ustensile filter
-document.querySelector('.drop-down-filter-input-search-ustensile').addEventListener('keyup', filter);
+//search inside drop down filter
+document.querySelectorAll('.drop-down-filter-input-search-ingredient, .drop-down-filter-input-search-appareil, .drop-down-filter-input-search-ustensile').forEach(inputSearch => inputSearch.addEventListener('keyup', filter));
 
 //create dishes template and render the drop down filter search
 function createDishesAndFiltersTemplate(dishes) {
