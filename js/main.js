@@ -15,6 +15,116 @@ let dishesTemplate = createDishesAndFiltersTemplate(dishes);
 
 renderDishes(dishesTemplate);
 
+//fix dishes content height when resize the window
+window.addEventListener('resize', function(){
+    document.querySelectorAll('.dishe-container').forEach(item => {
+        item.removeAttribute('style')
+    });
+
+    fixDishContentHeight()
+});
+
+//open or close ingredient drop down filter
+document.querySelector('.drop-down-filter.drop-down-primary').addEventListener('click', function(e) {
+    toggleDropDownFilter(e, this)
+});
+
+//open or close Appareils drop down filter
+document.querySelector('.drop-down-filter.drop-down-success').addEventListener('click', function(e) {
+    toggleDropDownFilter(e, this)
+});
+
+//open or close Ustensiles drop down filter
+document.querySelector('.drop-down-filter.drop-down-danger').addEventListener('click', function(e) {
+    toggleDropDownFilter(e, this)
+});
+
+//close the drop down menu when click outside of it
+window.addEventListener('click', function(e){
+    if(
+        e.target.closest('.drop-down-filter') !== document.querySelector('.drop-down-filter.drop-down-primary')
+        && 
+        e.target.closest('.drop-down-filter') !== document.querySelector('.drop-down-filter.drop-down-success')
+        &&
+        e.target.closest('.drop-down-filter') !== document.querySelector('.drop-down-filter.drop-down-danger')
+    ) {
+
+        emptyDropDownSearchText('');
+
+        document.querySelectorAll('.drop-down-filter.active').forEach(item => {
+            item.classList.remove('active')
+        });
+
+        document.querySelectorAll('.drop-down-filter.drop-down-primary .drop-down-filter-content div').forEach(item => {
+            if(!item.classList.contains('tagged')) {
+                item.classList.remove('hidden')
+            }
+        });
+
+        document.querySelectorAll('.drop-down-filter.drop-down-success .drop-down-filter-content div').forEach(item => {
+            if(!item.classList.contains('tagged')) {
+                item.classList.remove('hidden')
+            }
+        });
+
+        document.querySelectorAll('.drop-down-filter.drop-down-danger .drop-down-filter-content div').forEach(item => {
+            if(!item.classList.contains('tagged')) {
+                item.classList.remove('hidden')
+            }
+        });
+    }
+});
+
+//add click on drop down filter element
+document.querySelectorAll('.clickable').forEach(clickable => {
+    clickable.addEventListener('click', function(e) {
+
+        let searchIn = e.target.getAttribute('data-search-in');
+
+        renderClickDropDownFilterAsTag(this);
+
+        updateDropDownFilters(searchIn, this.innerText);
+
+        this.closest('div').classList.add('hidden');
+        this.closest('div').classList.add('tagged');
+    });
+});
+
+//remove the tag when click on close
+window.addEventListener('click', function(e){
+    
+    //if the clicked element contain the tag close clicked
+    if(e.target.classList.contains('fa-times-circle')) {
+        let pattern = e.target.getAttribute('pattern'),
+            id = e.target.getAttribute('for-id'),
+            searchIn = e.target.getAttribute('data-search-in'),
+            tagContent = e.target.closest('.search-filter-tag').querySelector('.search-filter-tag-title').innerText.trim();
+        
+        //get the original click filter from drop down
+        document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('hidden');
+        document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('tagged');
+
+        //remove the clicked tag
+        e.target.closest('.search-filter-tag').remove();
+
+        //remove the tag from chosen filter
+        let tagIndexInChosenFilters = chosenFilters[searchIn].indexOf(tagContent);
+
+        if(tagIndexInChosenFilters > -1) {
+            chosenFilters[e.target.getAttribute('data-search-in')].splice(tagIndexInChosenFilters, 1)
+        }
+    }
+});
+
+//ingredient filter
+document.querySelector('.drop-down-filter-input-search-ingredient').addEventListener('keyup', filter);
+
+//appareil filter
+document.querySelector('.drop-down-filter-input-search-appareil').addEventListener('keyup', filter);
+
+//ustensile filter
+document.querySelector('.drop-down-filter-input-search-ustensile').addEventListener('keyup', filter);
+
 //create dishes template and render the drop down filter search
 function createDishesAndFiltersTemplate(dishes) {
 
@@ -131,102 +241,6 @@ function fixDishContentHeight() {
     });
 }
 
-//fix dishes content height when resize the window
-window.addEventListener('resize', function(){
-    document.querySelectorAll('.dishe-container').forEach(item => {
-        item.removeAttribute('style')
-    });
-
-    fixDishContentHeight()
-});
-
-//open or close ingredient drop down filter
-document.querySelector('.drop-down-filter.drop-down-primary').addEventListener('click', function(e) {
-
-    emptyDropDownSearchText('ingredients');
-
-    //check if the clicked element is up arrow icon to close drop down
-    if(this.classList.contains('active') && e.target === this.querySelector('.fa-chevron-up')) {
-        this.classList.remove('active');
-        this.querySelector('input').value = "";
-    }else{
-        //show the click drop down element and hide the other
-        this.classList.add('active');
-        document.querySelector('.drop-down-filter.drop-down-success').classList.remove('active');
-        document.querySelector('.drop-down-filter.drop-down-danger').classList.remove('active');
-    }
-});
-
-//open or close Appareils drop down filter
-document.querySelector('.drop-down-filter.drop-down-success').addEventListener('click', function(e) {
-
-    emptyDropDownSearchText('appareils');
-
-    //check if the clicked element is up arrow icon to close drop down
-    if(this.classList.contains('active') && e.target === this.querySelector('.fa-chevron-up')) {
-        this.classList.remove('active');
-        this.querySelector('input').value = "";
-    }else{
-        //show the click drop down element and hide the other
-        this.classList.add('active');
-        document.querySelector('.drop-down-filter.drop-down-primary').classList.remove('active');
-        document.querySelector('.drop-down-filter.drop-down-danger').classList.remove('active');
-    }
-});
-
-//open or close Ustensiles drop down filter
-document.querySelector('.drop-down-filter.drop-down-danger').addEventListener('click', function(e) {
-
-    emptyDropDownSearchText('ustensiles');
-
-    //check if the clicked element is up arrow icon to close drop down
-    if(this.classList.contains('active') && e.target === this.querySelector('.fa-chevron-up')) {
-        this.classList.remove('active');
-        this.querySelector('input').value = "";
-    }else{
-        //show the click drop down element and hide the other
-        this.classList.add('active');
-        document.querySelector('.drop-down-filter.drop-down-success').classList.remove('active');
-        document.querySelector('.drop-down-filter.drop-down-primary').classList.remove('active');
-    }
-});
-
-//close the drop down menu when click outside of it
-window.addEventListener('click', function(e){
-    if(
-        e.target.closest('.drop-down-filter') !== document.querySelector('.drop-down-filter.drop-down-primary')
-        && 
-        e.target.closest('.drop-down-filter') !== document.querySelector('.drop-down-filter.drop-down-success')
-        &&
-        e.target.closest('.drop-down-filter') !== document.querySelector('.drop-down-filter.drop-down-danger')
-    ) {
-
-        emptyDropDownSearchText('');
-
-        document.querySelectorAll('.drop-down-filter.active').forEach(item => {
-            item.classList.remove('active')
-        });
-
-        document.querySelectorAll('.drop-down-filter.drop-down-primary .drop-down-filter-content div').forEach(item => {
-            if(!item.classList.contains('tagged')) {
-                item.classList.remove('hidden')
-            }
-        });
-
-        document.querySelectorAll('.drop-down-filter.drop-down-success .drop-down-filter-content div').forEach(item => {
-            if(!item.classList.contains('tagged')) {
-                item.classList.remove('hidden')
-            }
-        });
-
-        document.querySelectorAll('.drop-down-filter.drop-down-danger .drop-down-filter-content div').forEach(item => {
-            if(!item.classList.contains('tagged')) {
-                item.classList.remove('hidden')
-            }
-        });
-    }
-});
-
 //empty drop down search text except given name element
 function emptyDropDownSearchText(exceptElement) {
     if(exceptElement !== "ingredients") {
@@ -269,21 +283,6 @@ function renderDropDownSearchFilterTemplate(data, element) {
     element.innerHTML = dropDownSearchTextTemplate
 }
 
-//add click on drop down filter element
-document.querySelectorAll('.clickable').forEach(clickable => {
-    clickable.addEventListener('click', function(e) {
-
-        let searchIn = e.target.getAttribute('data-search-in');
-
-        renderClickDropDownFilterAsTag(this);
-
-        updateDropDownFilters(searchIn, this.innerText);
-
-        this.closest('div').classList.add('hidden');
-        this.closest('div').classList.add('tagged');
-    });
-});
-
 //render clicked drop down filter as tag
 function renderClickDropDownFilterAsTag(element) {
     //create template
@@ -299,41 +298,6 @@ function renderClickDropDownFilterAsTag(element) {
     //append the tag to tags list
     document.querySelector('.search-filter-tags').innerHTML += template;
 }
-
-//remove the tag when click on close
-window.addEventListener('click', function(e){
-    
-    //if the clicked element contain the tag close clicked
-    if(e.target.classList.contains('fa-times-circle')) {
-        let pattern = e.target.getAttribute('pattern'),
-            id = e.target.getAttribute('for-id'),
-            searchIn = e.target.getAttribute('data-search-in'),
-            tagContent = e.target.closest('.search-filter-tag').querySelector('.search-filter-tag-title').innerText.trim();
-        
-        //get the original click filter from drop down
-        document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('hidden');
-        document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('tagged');
-
-        //remove the clicked tag
-        e.target.closest('.search-filter-tag').remove();
-
-        //remove the tag from chosen filter
-        let tagIndexInChosenFilters = chosenFilters[searchIn].indexOf(tagContent);
-
-        if(tagIndexInChosenFilters > -1) {
-            chosenFilters[e.target.getAttribute('data-search-in')].splice(tagIndexInChosenFilters, 1)
-        }
-    }
-});
-
-//ingredient filter
-document.querySelector('.drop-down-filter-input-search-ingredient').addEventListener('keyup', filter);
-
-//appareil filter
-document.querySelector('.drop-down-filter-input-search-appareil').addEventListener('keyup', filter);
-
-//ustensile filter
-document.querySelector('.drop-down-filter-input-search-ustensile').addEventListener('keyup', filter);
 
 //do filter for drop down filter search
 function filter(e) {
@@ -371,8 +335,6 @@ function updateDropDownFilters(searchFilterKey, contentText) {
     let newDishes = updateDishesData();
 
     let newDishesTemplate = createDishesTemplates(newDishes);
-
-    renderDishes(newDishesTemplate);
 }
 
 //create new dishes array from filtred ingredient, appareils and ustensiles
@@ -446,4 +408,32 @@ function dishContainFiltredUstensiles(dishUstensiles) {
     }
 
     return foundedUstensiles.length === chosenFilters.ustensiles.length
+}
+
+//open or close drop down filter
+function toggleDropDownFilter(event, element) {
+    let searchType = element.getAttribute('data-filter-type');
+
+    emptyDropDownSearchText(searchType);
+
+    //check if the clicked element is up arrow icon to close drop down
+    if(element.classList.contains('active') && event.target === element.querySelector('.fa-chevron-up')) {
+        element.classList.remove('active');
+        element.querySelector('input').value = "";
+    }else{
+        //show the click drop down element and hide the other
+        element.classList.add('active');
+
+        if(searchType !== "ingredients") {
+            document.querySelector('.drop-down-filter.drop-down-primary').classList.remove('active');
+        }
+
+        if(searchType !== "appareils") {
+            document.querySelector('.drop-down-filter.drop-down-success').classList.remove('active');
+        }
+
+        if(searchType !== "ustensiles") {
+            document.querySelector('.drop-down-filter.drop-down-danger').classList.remove('active');
+        }
+    }
 }
