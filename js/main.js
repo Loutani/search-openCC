@@ -110,6 +110,16 @@ window.addEventListener('click', function(e){
 //search inside drop down filter
 document.querySelectorAll('.drop-down-filter-input-search-ingredient, .drop-down-filter-input-search-appareil, .drop-down-filter-input-search-ustensile').forEach(inputSearch => inputSearch.addEventListener('keyup', filter));
 
+//search by global search
+document.querySelector('.input-search').addEventListener('keyup', function(e) {
+    let search = e.target.value,
+        data = newDishes.length === 0 ? dishes : newDishes,
+        newDishesTemplate = (search.length > 2) ? createDishesTemplates(searchInDishes(search)) : createDishesTemplates(data); 
+
+    renderDishes(newDishesTemplate);
+
+});
+
 //create dishes template and render the drop down filter search
 function createDishesAndFiltersTemplate(dishes) {
 
@@ -425,10 +435,11 @@ function toggleDropDownFilter(event, element) {
 
 //search in dishes
 function searchInDishes(search) {
-    let searchResult = [];
+    let searchResult = [],
+        data = newDishes.length === 0 ? dishes : newDishes ;
 
-    for(let i = 0; i < newDishes.length; i++) {
-        let dish = newDishes[i],
+    for(let i = 0; i < data.length; i++) {
+        let dish = data[i],
             dishName = dish.name,
             dishDescription = dish.description,
             dishIngredients = dish.ingredients;
