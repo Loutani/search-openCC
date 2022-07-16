@@ -104,6 +104,14 @@ window.addEventListener('click', function(e){
         if(tagIndexInChosenFilters > -1) {
             chosenFilters[e.target.getAttribute('data-search-in')].splice(tagIndexInChosenFilters, 1)
         }
+
+        newDishes = updateDishesData();
+
+        let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase());
+
+        let newDishesTemplate = createDishesTemplates(searchResult);
+
+        renderDishes(newDishesTemplate);
     }
 });
 
@@ -114,7 +122,7 @@ document.querySelectorAll('.drop-down-filter-input-search-ingredient, .drop-down
 document.querySelector('.input-search').addEventListener('keyup', function(e) {
     let search = e.target.value,
         data = newDishes.length === 0 ? dishes : newDishes,
-        newDishesTemplate = (search.length > 2) ? createDishesTemplates(searchInDishes(search)) : createDishesTemplates(data); 
+        newDishesTemplate = (search.length > 2) ? createDishesTemplates(searchInDishes(search.toLowerCase())) : createDishesTemplates(data); 
 
     renderDishes(newDishesTemplate);
 
@@ -329,7 +337,7 @@ function updateDropDownFilters(searchFilterKey, contentText) {
 
     newDishes = updateDishesData();
 
-    let searchResult = searchInDishes(document.querySelector('.input-search').value);
+    let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase());
 
     let newDishesTemplate = createDishesTemplates(searchResult);
 
@@ -449,13 +457,13 @@ function searchInDishes(search) {
             dishIngredients = dish.ingredients;
 
         //dish name includes searched word
-        if(dishName.includes(search)) {
+        if(dishName.toLowerCase().includes(search)) {
             searchResult.push(dish);
             continue;
         }
 
         //dish description includes searched word
-        if(dishDescription.includes(search)) {
+        if(dishDescription.toLowerCase().includes(search)) {
             searchResult.push(dish);
             continue;
         }
@@ -464,7 +472,7 @@ function searchInDishes(search) {
         for(let j = 0; j < dishIngredients.length; j++) {
             let dishIngredient = dishIngredients[j].ingredient;
 
-            if(dishIngredient.includes(search)) {
+            if(dishIngredient.toLowerCase().includes(search)) {
                 searchResult.push(dish);
                 break;
             }
