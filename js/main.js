@@ -329,7 +329,11 @@ function updateDropDownFilters(searchFilterKey, contentText) {
 
     newDishes = updateDishesData();
 
-    //let newDishesTemplate = createDishesTemplates(newDishes);
+    let searchResult = searchInDishes(document.querySelector('.input-search').value);
+
+    let newDishesTemplate = createDishesTemplates(searchResult);
+
+    renderDishes(newDishesTemplate);
 }
 
 //create new dishes array from filtred ingredient, appareils and ustensiles
