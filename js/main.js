@@ -9,7 +9,8 @@ chosenFilters = {
     ingredients : [],
     appareils   : [],
     ustensiles  : [],
-};
+},
+newDishes = [];
 
 let dishesTemplate = createDishesAndFiltersTemplate(dishes);
 
@@ -316,9 +317,9 @@ function updateDropDownFilters(searchFilterKey, contentText) {
 
     chosenFilters[searchFilterKey].push(contentText)
 
-    let newDishes = updateDishesData();
+    newDishes = updateDishesData();
 
-    let newDishesTemplate = createDishesTemplates(newDishes);
+    //let newDishesTemplate = createDishesTemplates(newDishes);
 }
 
 //create new dishes array from filtred ingredient, appareils and ustensiles
@@ -420,4 +421,40 @@ function toggleDropDownFilter(event, element) {
             document.querySelector('.drop-down-filter.drop-down-danger').classList.remove('active');
         }
     }
+}
+
+//search in dishes
+function searchInDishes(search) {
+    let searchResult = [];
+
+    for(let i = 0; i < newDishes.length; i++) {
+        let dish = newDishes[i],
+            dishName = dish.name,
+            dishDescription = dish.description,
+            dishIngredients = dish.ingredients;
+
+        //dish name includes searched word
+        if(dishName.includes(search)) {
+            searchResult.push(dish);
+            continue;
+        }
+
+        //dish description includes searched word
+        if(dishDescription.includes(search)) {
+            searchResult.push(dish);
+            continue;
+        }
+
+        //dish ingredients includes search word
+        for(let j = 0; j < dishIngredients.length; j++) {
+            let dishIngredient = dishIngredients[j].ingredient;
+
+            if(dishIngredient.includes(search)) {
+                searchResult.push(dish);
+                break;
+            }
+        }
+    }
+
+    return searchResult
 }
