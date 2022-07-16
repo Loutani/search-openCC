@@ -104,6 +104,14 @@ window.addEventListener('click', function(e){
         if(tagIndexInChosenFilters > -1) {
             chosenFilters[e.target.getAttribute('data-search-in')].splice(tagIndexInChosenFilters, 1)
         }
+
+        newDishes = updateDishesData();
+
+        let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase());
+
+        let newDishesTemplate = createDishesTemplates(searchResult);
+
+        renderDishes(newDishesTemplate);
     }
 });
 
