@@ -421,3 +421,31 @@ function toggleDropDownFilter(event, element) {
         }
     }
 }
+
+//search in dishes
+function searchInDishes(search) {
+    let data = newDishes.length === 0 ? dishes : newDishes ;
+
+    return data.map(dish => {
+        let dishName = dish.name,
+            dishDescription = dish.description,
+            dishIngredients = dish.ingredients;
+    
+        //dish name includes searched word
+        if(dishName.includes(search)) {
+            return dish;
+        }
+    
+        //dish description includes searched word
+        if(dishDescription.includes(search)) {
+            return dish;
+        }
+    
+        //dish ingredients includes search word
+        let foundedIngredients = dishIngredients.find(ingredient => ingredient.includes(search));
+    
+        if(foundedIngredients.length > 0) {
+            return dish
+        }
+    });
+}
