@@ -369,8 +369,8 @@ function dishContainFiltredAppareils(dishAppareils) {
         return true;
     }
     
-    for(let ingredientIndex = 0; ingredientIndex < dishAppareils.length; ingredientIndex++) {
-        if(chosenFilters.appareils === dishAppareils[ingredientIndex]) {
+    for(let ingredientIndex = 0; ingredientIndex < chosenFilters.appareils.length; ingredientIndex++) {
+        if(chosenFilters.appareils[ingredientIndex] === dishAppareils) {
             foundAppareils = true
         }
     }
