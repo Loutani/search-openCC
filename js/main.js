@@ -364,7 +364,7 @@ function updateDishesData() {
         }
     });
 
-    return dishesFromFilter
+    return dishesFromFilter.length === 0 ? [] : dishesFromFilter
 }
 
 //check if the filter ingredient is in dish ingredients
