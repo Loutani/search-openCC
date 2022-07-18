@@ -383,14 +383,14 @@ function dishContainFiltredUstensiles(dishUstensiles) {
     let foundedUstensiles = [];
 
     for(let ingredientIndex = 0; ingredientIndex < dishUstensiles.length; ingredientIndex++) {
-        for(let ustensileIndex; ustensileIndex < chosenFilters.ustensiles.length; ustensileIndex++) {
-            if(chosenFilters.ustensiles[ustensileIndex] === dishUstensiles[ingredientIndex]) {
+        for(let ustensileIndex = 0; ustensileIndex < chosenFilters.ustensiles.length; ustensileIndex++) {
+            if(chosenFilters.ustensiles[ustensileIndex].toLowerCase() === dishUstensiles[ingredientIndex].toLowerCase()) {
                 foundedUstensiles.push(dishUstensiles[ingredientIndex]);
                 break;
             }
         }
     }
-
+    
     return foundedUstensiles.length === chosenFilters.ustensiles.length
 }
 
