@@ -392,8 +392,8 @@ function dishContainFiltredAppareils(dishAppareils) {
         return true;
     }
     
-    for(let ingredientIndex = 0; ingredientIndex < dishAppareils.length; ingredientIndex++) {
-        if(chosenFilters.appareils === dishAppareils[ingredientIndex]) {
+    for(let ingredientIndex = 0; ingredientIndex < chosenFilters.appareils.length; ingredientIndex++) {
+        if(chosenFilters.appareils[ingredientIndex] === dishAppareils) {
             foundAppareils = true
         }
     }
@@ -406,14 +406,14 @@ function dishContainFiltredUstensiles(dishUstensiles) {
     let foundedUstensiles = [];
 
     for(let ingredientIndex = 0; ingredientIndex < dishUstensiles.length; ingredientIndex++) {
-        for(let ustensileIndex; ustensileIndex < chosenFilters.ustensiles.length; ustensileIndex++) {
-            if(chosenFilters.ustensiles[ustensileIndex] === dishUstensiles[ingredientIndex]) {
+        for(let ustensileIndex = 0; ustensileIndex < chosenFilters.ustensiles.length; ustensileIndex++) {
+            if(chosenFilters.ustensiles[ustensileIndex].toLowerCase() === dishUstensiles[ingredientIndex].toLowerCase()) {
                 foundedUstensiles.push(dishUstensiles[ingredientIndex]);
                 break;
             }
         }
     }
-
+    
     return foundedUstensiles.length === chosenFilters.ustensiles.length
 }
 
