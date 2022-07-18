@@ -448,7 +448,7 @@ function toggleDropDownFilter(event, element) {
 //search in dishes
 function searchInDishes(search) {
     let searchResult = [],
-        data = newDishes;
+        data = newDishes.length === 0 ? dishes : newDishes;
 
     for(let i = 0; i < data.length; i++) {
         let dish = data[i],
