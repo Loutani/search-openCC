@@ -453,7 +453,7 @@ function toggleDropDownFilter(event, element) {
 }
 
 function searchInDishes(search, dishList) {
-    let data = getCompatibledishWithFilters().length === 0 ? dishes : getCompatibledishWithFilters();
+    let data = dishList.length === 0 ? dishes : dishList;
 
     let founded = data.filter(dish => {
         let dishName = dish.name,
