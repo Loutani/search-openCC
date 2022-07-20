@@ -66,21 +66,6 @@ window.addEventListener('click', function(e){
     }
 });
 
-//add click on drop down filter element
-document.querySelectorAll('.clickable').forEach(clickable => {
-    clickable.addEventListener('click', function(e) {
-
-        let searchIn = e.target.getAttribute('data-search-in');
-
-        renderClickDropDownFilterAsTag(this);
-
-        updateDropDownFilters(searchIn, this.innerText);
-
-        this.closest('div').classList.add('hidden');
-        this.closest('div').classList.add('tagged');
-    });
-});
-
 //remove the tag when click on close
 window.addEventListener('click', function(e){
     
@@ -90,10 +75,6 @@ window.addEventListener('click', function(e){
             id = e.target.getAttribute('for-id'),
             searchIn = e.target.getAttribute('data-search-in'),
             tagContent = e.target.closest('.search-filter-tag').querySelector('.search-filter-tag-title').innerText.trim();
-        
-        //get the original click filter from drop down
-        document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('hidden');
-        document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('tagged');
 
         //remove the clicked tag
         e.target.closest('.search-filter-tag').remove();
@@ -105,9 +86,18 @@ window.addEventListener('click', function(e){
             chosenFilters[e.target.getAttribute('data-search-in')].splice(tagIndexInChosenFilters, 1)
         }
 
-        newDishes = updateDishesData();
+        renderDishesFilter(getCompatibledishWithFilters());
 
-        let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase());
+        //get the original click filter from drop down
+        document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('hidden');
+        document.querySelector(`.drop-down-${pattern} #${id}`).closest('div').classList.remove('tagged');
+
+        document.querySelectorAll('.fa-times-circle').forEach(element => {
+            document.querySelector(`p#${element.getAttribute('for-id')}`).closest('div').classList.add('hidden')
+            document.querySelector(`p#${element.getAttribute('for-id')}`).closest('div').classList.add('tagged')
+        });
+
+        let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase(), getCompatibledishWithFilters());
 
         let newDishesTemplate = createDishesTemplates(searchResult);
 
@@ -128,6 +118,23 @@ document.querySelector('.input-search').addEventListener('keyup', function(e) {
 
 });
 
+window.addEventListener('click', function(e) {
+    if(e.target.classList.contains('clickable')) {
+        let searchIn = e.target.getAttribute('data-search-in'),
+            filterText = e.target.innerText;
+
+            
+        renderClickDropDownFilterAsTag(e.target);
+        
+        updateDropDownFilters(searchIn, filterText, getCompatibledishWithFilters());
+        
+        renderDishesFilter(getCompatibledishWithFilters());
+
+        document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('hidden');
+        document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('tagged');
+    }
+});
+
 //create dishes template and render the drop down filter search
 function createDishesAndFiltersTemplate(dishes) {
 
@@ -135,9 +142,7 @@ function createDishesAndFiltersTemplate(dishes) {
     let dishesTemplate = createDishesTemplates(dishes);
 
     //render the drop down search filter content
-    renderDropDownSearchFilterTemplate(filters.ingredients, document.querySelector('.drop-down-filter.drop-down-primary .drop-down-filter-content'))
-    renderDropDownSearchFilterTemplate(filters.appareils, document.querySelector('.drop-down-filter.drop-down-success .drop-down-filter-content'))
-    renderDropDownSearchFilterTemplate(filters.ustensiles, document.querySelector('.drop-down-filter.drop-down-danger .drop-down-filter-content'))
+    renderDishesFilter(getCompatibledishWithFilters())
 
     return dishesTemplate;
 }
@@ -157,12 +162,12 @@ function createDishesTemplates(dishes) {
         //push the appliance to filter list
         let tempAppliance = dish.appliance.toLowerCase();
 
-        appareilsTempFilters.push(tempAppliance.charAt(0).toUpperCase() + tempAppliance.slice(1));
+        appareilsTempFilters.push(makeFirstCharacterUpperCase(tempAppliance));
 
         //push the ustensil to filter list
         dish.ustensils.forEach(ustensil => {
             let tempUstensil = ustensil.toLowerCase()
-            ustensilesTempFilters.push(tempUstensil.charAt(0).toUpperCase() + tempUstensil.slice(1))
+            ustensilesTempFilters.push(makeFirstCharacterUpperCase(tempUstensil))
         });
 
         //loop through all the dish ingredients to create template for it
@@ -170,7 +175,7 @@ function createDishesTemplates(dishes) {
 
             //push the ingredient to filter list
             let tempIngredient = ingredient.ingredient.toLowerCase()
-            ingredientsTempFilters.push(tempIngredient.charAt(0).toUpperCase() + tempIngredient.slice(1))
+            ingredientsTempFilters.push(makeFirstCharacterUpperCase(tempIngredient))
 
             //create ingredients template
             dishIngredientTemplate += `<p class="fs-12 ln-14 mb-0">
@@ -280,7 +285,9 @@ function renderDropDownSearchFilterTemplate(data, element) {
     data = [...data]
 
     data.forEach((filter, index) => {
-        dropDownSearchTextTemplate += `<div><p data-type="${pattern}" data-search-in="${searchIn}" class="clickable mb-0 py-2" id="${pattern}-${index}">${filter}</p></div>`
+        let filterText = makeFirstCharacterUpperCase(filter.toLowerCase());
+
+        dropDownSearchTextTemplate += `<div><p data-value="${filterText}" data-type="${pattern}" data-search-in="${searchIn}" class="clickable mb-0 py-2" id="${pattern}-${index}">${filter}</p></div>`
     })
 
     element.innerHTML = dropDownSearchTextTemplate
@@ -294,7 +301,7 @@ function renderClickDropDownFilterAsTag(element) {
                             ${element.innerText}
                         </div>
                         <div class="search-filter-tag-icon btn-remove-tag">
-                            <i class="far fa-times-circle" pattern="${element.getAttribute('data-type')}" data-search-in="${element.getAttribute('data-search-in')}" for-id="${element.id}"></i>
+                            <i class="far fa-times-circle" data-value="${element.innerText}" pattern="${element.getAttribute('data-type')}" data-search-in="${element.getAttribute('data-search-in')}" for-id="${element.id}"></i>
                         </div>
                     </div>`
 
@@ -331,13 +338,13 @@ function renderDropDrownFilterOnSearch(element, type) {
     });
 }
 
-function updateDropDownFilters(searchFilterKey, contentText) {
+function updateDropDownFilters(searchFilterKey, text, dishesList) {
 
-    chosenFilters[searchFilterKey].push(contentText)
+    chosenFilters[searchFilterKey].push(text)
 
     newDishes = updateDishesData();
 
-    let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase());
+    let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase(), dishesList);
 
     let newDishesTemplate = createDishesTemplates(searchResult);
 
@@ -445,10 +452,95 @@ function toggleDropDownFilter(event, element) {
     }
 }
 
-//search in dishes
-function searchInDishes(search) {
+function renderDishesFilter(dishes) {
+    //render the filter drop down
+    renderDropDownSearchFilterTemplate(
+        getIngredientsFromDishes(dishes),
+        document.querySelector('.drop-down-filter.drop-down-primary .drop-down-filter-content')
+    );
+
+    renderDropDownSearchFilterTemplate(
+        getAppliancesFromDishes(dishes), 
+        document.querySelector('.drop-down-filter.drop-down-success .drop-down-filter-content')
+    );
+
+    renderDropDownSearchFilterTemplate(
+        getUstensilesFromDishes(dishes),
+        document.querySelector('.drop-down-filter.drop-down-danger .drop-down-filter-content')
+    );
+}
+
+//get the dishes include the filtered ingredients, appareils and ustensiles
+function getCompatibledishWithFilters() {
+    let dishList = dishes.filter(dish => 
+        chosenFilters.ingredients.length === 0 ? dish : dish.ingredients.find(
+            dishIng => chosenFilters.ingredients.includes(makeFirstCharacterUpperCase(dishIng.ingredient.toLowerCase()))
+        )
+    );
+
+    dishList = chosenFilters.appareils.length === 0 ? dishList : dishList.filter(dish => 
+        chosenFilters.appareils.find(
+            appareil => appareil.includes(makeFirstCharacterUpperCase(dish.appliance.toLowerCase()))
+        )
+    )
+
+    dishList = chosenFilters.ustensiles.length === 0 ? dishList : dishList.filter(dish => 
+        dish.ustensils.find(
+            dishUst => chosenFilters.ustensiles.includes(makeFirstCharacterUpperCase(dishUst.toLowerCase()))
+        )
+    );
+
+    return dishList;
+}
+
+//get ingredients from listed dish
+function getIngredientsFromDishes(dishesList) {
+    let dishIngredientList = [];
+
+    dishesList.map(dish => {
+        dish.ingredients.map(dishIngredient => {
+            let ingredient = makeFirstCharacterUpperCase(dishIngredient.ingredient.toLowerCase());
+            dishIngredientList.push(ingredient);
+        })
+    });
+
+    return new Set(dishIngredientList)
+}
+
+//get appliances from listed dish
+function getAppliancesFromDishes(dishesList) {
+    let dishApplianceList = [];
+
+    dishesList.map(dish => {
+        let appliance = makeFirstCharacterUpperCase(dish.appliance.toLowerCase());
+        dishApplianceList.push(appliance);
+    });
+
+    return new Set(dishApplianceList)
+}
+
+//get ustensiles from listed dish
+function getUstensilesFromDishes(dishesList) {
+    let dishUstensileList = [];
+
+    dishesList.map(dish => {
+        dish.ustensils.map(dishUstensil => {
+            let ustensil = makeFirstCharacterUpperCase(dishUstensil.toLowerCase());
+            dishUstensileList.push(ustensil)
+        });
+    })
+    
+    return new Set(dishUstensileList)
+}
+
+//make only the first character of the string uppercase
+function makeFirstCharacterUpperCase(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+function searchInDishes(search, dishList) {
     let searchResult = [],
-        data = newDishes.length === 0 ? dishes : newDishes;
+        data = dishList.length === 0 ? dishes : dishList;
 
     for(let i = 0; i < data.length; i++) {
         let dish = data[i],
