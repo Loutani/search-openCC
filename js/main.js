@@ -112,7 +112,7 @@ document.querySelectorAll('.drop-down-filter-input-search-ingredient, .drop-down
 document.querySelector('.input-search').addEventListener('keyup', function(e) {
     let search = e.target.value,
         data = getCompatibledishWithFilters().length === 0 ? dishes : getCompatibledishWithFilters(),
-        newDishesTemplate = (search.length > 2) ? createDishesTemplates(searchInDishes(search.toLowerCase())) : createDishesTemplates(data); 
+        newDishesTemplate = (search.length > 2) ? createDishesTemplates(searchInDishes(search.toLowerCase(), getCompatibledishWithFilters())) : createDishesTemplates(data); 
 
     renderDishes(newDishesTemplate);
 
