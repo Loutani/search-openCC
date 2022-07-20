@@ -245,7 +245,7 @@
 }
 
 .hidden {
-    display: none;
+    display: none!important;
 }
 
 /* scroll bar design */
