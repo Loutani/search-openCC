@@ -280,7 +280,7 @@ function renderDropDownSearchFilterTemplate(data, element) {
 //render clicked drop down filter as tag
 function renderClickDropDownFilterAsTag(element) {
     //create template
-    let template = `<div class="search-filter-tag px-2 py-1 search-filter-tag-${element.getAttribute('data-type')} me-1" id="${element.id}">
+    let template = `<div class="search-filter-tag px-2 py-1 search-filter-tag-${element.getAttribute('data-type')} me-1 mb-1" id="${element.id}">
                         <div class="search-filter-tag-title me-2">
                             ${element.innerText}
                         </div>
