@@ -129,7 +129,8 @@ document.querySelector('.input-search').addEventListener('keyup', function(e) {
 window.addEventListener('click', function(e) {
     if(e.target.classList.contains('clickable')) {
         let searchIn = e.target.getAttribute('data-search-in'),
-            filterText = e.target.innerText;
+            filterText = e.target.innerText,
+            filterContent = e.target.closest('.drop-down-filter-content');;
 
         renderClickDropDownFilterAsTag(e.target);
         
@@ -154,6 +155,12 @@ window.addEventListener('click', function(e) {
             }
         });
 
+        //show no result message
+        let hiddenLength = filterContent.querySelectorAll('div:not(.hidden)').length !== 0,
+            type = e.target.getAttribute('data-type');
+
+        toggleNoSearchFilterFound(type, hiddenLength)
+        
         //empty search input
         document.querySelector(`input[data-search="${e.target.getAttribute('data-type')}"]`).value = ""
     }
@@ -499,16 +506,24 @@ function toggleDropDownFilter(event, element) {
         //show the click drop down element and hide the other
         element.classList.add('active');
 
+        let hiddenLength = event.target.closest('.drop-down-filter').querySelectorAll('.drop-down-filter-content div:not(.hidden)').length !== 0
+
         if(searchType !== "ingredients") {
             document.querySelector('.drop-down-filter.drop-down-primary').classList.remove('active');
+        }else{
+            toggleNoSearchFilterFound('primary', hiddenLength)
         }
 
         if(searchType !== "appareils") {
             document.querySelector('.drop-down-filter.drop-down-success').classList.remove('active');
+        }else{
+            toggleNoSearchFilterFound('success', hiddenLength)
         }
 
         if(searchType !== "ustensiles") {
             document.querySelector('.drop-down-filter.drop-down-danger').classList.remove('active');
+        }else{
+            toggleNoSearchFilterFound('danger', hiddenLength)
         }
     }
 }
