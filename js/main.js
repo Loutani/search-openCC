@@ -501,11 +501,22 @@ function renderDishesFilter(dishes) {
 
 //get the dishes include the filtered ingredients, appareils and ustensiles
 function getCompatibledishWithFilters() {
-    let dishList = dishes.filter(dish => 
-        chosenFilters.ingredients.length === 0 ? dish : dish.ingredients.find(
-            dishIng => chosenFilters.ingredients.includes(makeFirstCharacterUpperCase(dishIng.ingredient.toLowerCase()))
-        )
-    );
+    let dishList = dishes.filter(dish => {
+
+        if(chosenFilters.ingredients.length === 0) {
+            return dish
+        }
+
+        let dishIngredientArray = dish.ingredients.map(ingredient => ingredient.ingredient);
+
+        let allIngredientIncluded = chosenFilters.ingredients.every(item => {
+            return dishIngredientArray.includes(item)
+        });
+
+        if(allIngredientIncluded) {
+            return dish;
+        }
+    });
 
     dishList = chosenFilters.appareils.length === 0 ? dishList : dishList.filter(dish => 
         chosenFilters.appareils.find(
