@@ -133,6 +133,9 @@ window.addEventListener('click', function(e) {
                 item.closest('div').classList.add('tagged')
             }
         });
+
+        //empty search input
+        document.querySelector(`input[data-search="${e.target.getAttribute('data-type')}"]`).value = ""
     }
 });
 
