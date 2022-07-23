@@ -126,8 +126,12 @@ window.addEventListener('click', function(e) {
 
         //hide the chosen filter
         document.querySelectorAll('.search-filter-tag').forEach(tag => {
-            document.querySelector(`.clickable#${tag.id}`).closest('div').classList.add('hidden');
-            document.querySelector(`.clickable#${tag.id}`).closest('div').classList.add('tagged');
+            let item = document.querySelector(`.clickable#${tag.id}`);
+
+            if(item) {
+                item.closest('div').classList.add('hidden');
+                item.closest('div').classList.add('tagged')
+            }
         });
     }
 });
@@ -451,7 +455,7 @@ function toggleDropDownFilter(event, element) {
         document.querySelectorAll('.drop-down-filter-content').forEach(item => {
             item.classList.remove('hidden')
         })
-        
+
     }else{
         //show the click drop down element and hide the other
         element.classList.add('active');
