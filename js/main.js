@@ -113,7 +113,8 @@ document.querySelectorAll('.drop-down-filter-input-search-ingredient, .drop-down
 window.addEventListener('click', function(e) {
     if(e.target.classList.contains('clickable')) {
         let searchIn = e.target.getAttribute('data-search-in'),
-            filterText = e.target.innerText;
+            filterText = e.target.innerText,
+            filterContent = e.target.closest('.drop-down-filter-content');;
 
         renderClickDropDownFilterAsTag(e.target);
         
@@ -138,6 +139,12 @@ window.addEventListener('click', function(e) {
             }
         });
 
+        //show no result message
+        let hiddenLength = filterContent.querySelectorAll('div:not(.hidden)').length !== 0,
+            type = e.target.getAttribute('data-type');
+
+        toggleNoSearchFilterFound(type, hiddenLength)
+        
         //empty search input
         document.querySelector(`input[data-search="${e.target.getAttribute('data-type')}"]`).value = ""
     }
