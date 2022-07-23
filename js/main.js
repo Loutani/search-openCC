@@ -121,9 +121,13 @@ window.addEventListener('click', function(e) {
         
         renderDishesFilter(getCompatibledishWithFilters());
 
-        document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('hidden');
-        document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('tagged');
+        let item = document.querySelector(`p[data-value="${filterText}"]`)
 
+        if(item) {
+            item.closest('div').classList.add('hidden');
+            item.closest('div').classList.add('tagged');
+        }
+    
         //hide the chosen filter
         document.querySelectorAll('.search-filter-tag').forEach(tag => {
             let item = document.querySelector(`.clickable#${tag.id}`);
