@@ -220,6 +220,16 @@ function createDishesTemplates(dishes) {
                     </div>`
     });
 
+    if(dishes.length > 0) {
+        //we have result
+        document.querySelector('.no-result').classList.add('hidden');
+        document.querySelector('.dishes').classList.remove('hidden');
+    }else{
+        //we don't have result
+        document.querySelector('.no-result').classList.remove('hidden');
+        document.querySelector('.dishes').classList.add('hidden');
+    }
+    
     filters.ingredients = new Set(ingredientsTempFilters);
     filters.appareils = new Set(appareilsTempFilters);
     filters.ustensiles = new Set(ustensilesTempFilters);
