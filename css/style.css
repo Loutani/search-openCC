@@ -43,6 +43,7 @@
 
 .drop-down-filter {
     display: inline-block;
+    vertical-align: top;
 }
 
 .drop-down-primary, .drop-down-success, .drop-down-danger {
@@ -264,4 +265,9 @@
 
 .drop-down-filter-content::-webkit-scrollbar-thumb:hover {
     background: rgb(255, 255, 255); 
+}
+.primary-no-result p,
+.success-no-result p,
+.danger-no-result p {
+    padding-left: 2px;
 }
