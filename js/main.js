@@ -535,8 +535,6 @@ function getCompatibledishWithFilters() {
         let allUstensilesIncluded = chosenFilters.ustensiles.every(item => {
             return dishUstensilesArray.includes(item)
         });
-    
-        console.log(dishUstensilesArray, chosenFilters.ustensiles, allUstensilesIncluded)
 
         if(allUstensilesIncluded) {
             return dish;
