@@ -524,13 +524,26 @@ function getCompatibledishWithFilters() {
         )
     )
 
-    dishList = chosenFilters.ustensiles.length === 0 ? dishList : dishList.filter(dish => 
-        dish.ustensils.find(
-            dishUst => chosenFilters.ustensiles.includes(makeFirstCharacterUpperCase(dishUst.toLowerCase()))
-        )
-    );
+    dishList = dishList.filter(dish => {
 
-    return dishList;
+        if(chosenFilters.ustensiles.length === 0) {
+            return dish;
+        }
+
+        let dishUstensilesArray = dish.ustensils.map(ustensil => makeFirstCharacterUpperCase(ustensil.toLowerCase()));
+
+        let allUstensilesIncluded = chosenFilters.ustensiles.every(item => {
+            return dishUstensilesArray.includes(item)
+        });
+    
+        console.log(dishUstensilesArray, chosenFilters.ustensiles, allUstensilesIncluded)
+
+        if(allUstensilesIncluded) {
+            return dish;
+        }
+    })
+
+    return dishList
 }
 
 //get ingredients from listed dish
