@@ -63,6 +63,14 @@ window.addEventListener('click', function(e){
                 item.classList.remove('hidden')
             }
         });
+
+        document.querySelectorAll('.no-result-message ').forEach(item => {
+            item.classList.add('hidden')
+        });
+
+        document.querySelectorAll('.drop-down-filter-content').forEach(item => {
+            item.classList.remove('hidden')
+        })
     }
 });
 
@@ -131,15 +139,31 @@ window.addEventListener('click', function(e) {
         let searchIn = e.target.getAttribute('data-search-in'),
             filterText = e.target.innerText;
 
-            
         renderClickDropDownFilterAsTag(e.target);
         
         updateDropDownFilters(searchIn, filterText, getCompatibledishWithFilters());
         
         renderDishesFilter(getCompatibledishWithFilters());
 
-        document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('hidden');
-        document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('tagged');
+        let item = document.querySelector(`p[data-value="${filterText}"]`)
+
+        if(item) {
+            item.closest('div').classList.add('hidden');
+            item.closest('div').classList.add('tagged');
+        }
+    
+        //hide the chosen filter
+        document.querySelectorAll('.search-filter-tag').forEach(tag => {
+            let item = document.querySelector(`.clickable#${tag.id}`);
+
+            if(item) {
+                item.closest('div').classList.add('hidden');
+                item.closest('div').classList.add('tagged')
+            }
+        });
+
+        //empty search input
+        document.querySelector(`input[data-search="${e.target.getAttribute('data-type')}"]`).value = ""
     }
 });
 
@@ -278,7 +302,6 @@ function emptyDropDownSearchText(exceptElement) {
         document.querySelector('.drop-down-filter.drop-down-success input').value = ""
     }
 
-
     if(exceptElement !== "ustensiles") {
         document.querySelector('.drop-down-filter.drop-down-danger input').value = ""
     }
@@ -315,7 +338,7 @@ function renderDropDownSearchFilterTemplate(data, element) {
 //render clicked drop down filter as tag
 function renderClickDropDownFilterAsTag(element) {
     //create template
-    let template = `<div class="search-filter-tag px-2 py-1 search-filter-tag-${element.getAttribute('data-type')} me-1" id="${element.id}">
+    let template = `<div class="search-filter-tag px-2 py-1 search-filter-tag-${element.getAttribute('data-type')} me-1 mb-1" id="${element.id}">
                         <div class="search-filter-tag-title me-2">
                             ${element.innerText}
                         </div>
@@ -338,8 +361,27 @@ function filter(e) {
                 item.classList.remove('hidden')
             }
         });
+
+        //hide no filter search found
+        toggleNoSearchFilterFound(type)
     }else{
         renderDropDrownFilterOnSearch(e, type)
+        //check before show no filter search found
+        let searchFilterContainer = e.target.closest('.drop-down-filter').querySelector('.drop-down-filter-content');
+
+        let searchFilterLength = searchFilterContainer.querySelectorAll('div:not(.hidden)').length;
+
+        toggleNoSearchFilterFound(type, searchFilterLength)
+    }
+}
+
+function toggleNoSearchFilterFound(type, show = true) {
+    if(show) {
+        document.querySelector(`.drop-down-${type} .drop-down-filter-content`).classList.remove("hidden");
+        document.querySelector(`.${type}-no-result`).classList.add('hidden')
+    }else{
+        document.querySelector(`.drop-down-${type} .drop-down-filter-content`).classList.add("hidden");
+        document.querySelector(`.${type}-no-result`).classList.remove('hidden')
     }
 }
 
@@ -453,6 +495,15 @@ function toggleDropDownFilter(event, element) {
     if(element.classList.contains('active') && event.target === element.querySelector('.fa-chevron-up')) {
         element.classList.remove('active');
         element.querySelector('input').value = "";
+
+        document.querySelectorAll('.no-result-message ').forEach(item => {
+            item.classList.add('hidden')
+        });
+
+        document.querySelectorAll('.drop-down-filter-content').forEach(item => {
+            item.classList.remove('hidden')
+        })
+
     }else{
         //show the click drop down element and hide the other
         element.classList.add('active');
@@ -520,11 +571,22 @@ function renderDishesFilter(dishes) {
 
 //get the dishes include the filtered ingredients, appareils and ustensiles
 function getCompatibledishWithFilters() {
-    let dishList = dishes.filter(dish => 
-        chosenFilters.ingredients.length === 0 ? dish : dish.ingredients.find(
-            dishIng => chosenFilters.ingredients.includes(makeFirstCharacterUpperCase(dishIng.ingredient.toLowerCase()))
-        )
-    );
+    let dishList = dishes.filter(dish => {
+
+        if(chosenFilters.ingredients.length === 0) {
+            return dish
+        }
+
+        let dishIngredientArray = dish.ingredients.map(ingredient => ingredient.ingredient);
+
+        let allIngredientIncluded = chosenFilters.ingredients.every(item => {
+            return dishIngredientArray.includes(item)
+        });
+
+        if(allIngredientIncluded) {
+            return dish;
+        }
+    });
 
     dishList = chosenFilters.appareils.length === 0 ? dishList : dishList.filter(dish => 
         chosenFilters.appareils.find(
@@ -532,13 +594,24 @@ function getCompatibledishWithFilters() {
         )
     )
 
-    dishList = chosenFilters.ustensiles.length === 0 ? dishList : dishList.filter(dish => 
-        dish.ustensils.find(
-            dishUst => chosenFilters.ustensiles.includes(makeFirstCharacterUpperCase(dishUst.toLowerCase()))
-        )
-    );
+    dishList = dishList.filter(dish => {
 
-    return dishList;
+        if(chosenFilters.ustensiles.length === 0) {
+            return dish;
+        }
+
+        let dishUstensilesArray = dish.ustensils.map(ustensil => makeFirstCharacterUpperCase(ustensil.toLowerCase()));
+
+        let allUstensilesIncluded = chosenFilters.ustensiles.every(item => {
+            return dishUstensilesArray.includes(item)
+        });
+
+        if(allUstensilesIncluded) {
+            return dish;
+        }
+    })
+
+    return dishList
 }
 
 //get ingredients from listed dish
