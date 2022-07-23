@@ -171,6 +171,12 @@ window.addEventListener('click', function(e) {
         
         //empty search input
         document.querySelector(`input[data-search="${e.target.getAttribute('data-type')}"]`).value = ""
+
+        let searchResult = searchInDishes(document.querySelector('.input-search').value.toLowerCase(), getCompatibledishWithFilters());
+
+        let newDishesTemplate = createDishesTemplates(searchResult);
+
+        renderDishes(newDishesTemplate);
     }
 });
 
