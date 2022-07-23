@@ -112,7 +112,15 @@ document.querySelectorAll('.drop-down-filter-input-search-ingredient, .drop-down
 document.querySelector('.input-search').addEventListener('keyup', function(e) {
     let search = e.target.value,
         data = getCompatibledishWithFilters().length === 0 ? dishes : getCompatibledishWithFilters(),
-        newDishesTemplate = (search.length > 2) ? createDishesTemplates(searchInDishes(search.toLowerCase(), getCompatibledishWithFilters())) : createDishesTemplates(data); 
+        newDishesTemplate = (search.length > 2) ? 
+                                                    createDishesTemplates(
+                                                        searchInDishes(
+                                                            search.toLowerCase(),
+                                                            getCompatibledishWithFilters()
+                                                        )
+                                                    )
+                                                : 
+                                                    createDishesTemplates(data);
 
     renderDishes(newDishesTemplate);
 
@@ -223,6 +231,17 @@ function createDishesTemplates(dishes) {
     filters.ingredients = new Set(ingredientsTempFilters);
     filters.appareils = new Set(appareilsTempFilters);
     filters.ustensiles = new Set(ustensilesTempFilters);
+
+    if(dishes.length > 0) {
+        //we have result
+        document.querySelector('.no-result').classList.add('hidden');
+        document.querySelector('.dishes').classList.remove('hidden');
+    }else{
+        //we don't have result
+        document.querySelector('.no-result').classList.remove('hidden');
+        document.querySelector('.dishes').classList.add('hidden');
+    }
+
     return dishesTemplate
 }
 
