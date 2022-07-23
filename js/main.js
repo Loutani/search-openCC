@@ -533,11 +533,22 @@ function renderDishesFilter(dishes) {
 
 //get the dishes include the filtered ingredients, appareils and ustensiles
 function getCompatibledishWithFilters() {
-    let dishList = dishes.filter(dish => 
-        chosenFilters.ingredients.length === 0 ? dish : dish.ingredients.find(
-            dishIng => chosenFilters.ingredients.includes(makeFirstCharacterUpperCase(dishIng.ingredient.toLowerCase()))
-        )
-    );
+    let dishList = dishes.filter(dish => {
+
+        if(chosenFilters.ingredients.length === 0) {
+            return dish
+        }
+
+        let dishIngredientArray = dish.ingredients.map(ingredient => ingredient.ingredient);
+
+        let allIngredientIncluded = chosenFilters.ingredients.every(item => {
+            return dishIngredientArray.includes(item)
+        });
+
+        if(allIngredientIncluded) {
+            return dish;
+        }
+    });
 
     dishList = chosenFilters.appareils.length === 0 ? dishList : dishList.filter(dish => 
         chosenFilters.appareils.find(
@@ -545,13 +556,24 @@ function getCompatibledishWithFilters() {
         )
     )
 
-    dishList = chosenFilters.ustensiles.length === 0 ? dishList : dishList.filter(dish => 
-        dish.ustensils.find(
-            dishUst => chosenFilters.ustensiles.includes(makeFirstCharacterUpperCase(dishUst.toLowerCase()))
-        )
-    );
+    dishList = dishList.filter(dish => {
 
-    return dishList;
+        if(chosenFilters.ustensiles.length === 0) {
+            return dish;
+        }
+
+        let dishUstensilesArray = dish.ustensils.map(ustensil => makeFirstCharacterUpperCase(ustensil.toLowerCase()));
+
+        let allUstensilesIncluded = chosenFilters.ustensiles.every(item => {
+            return dishUstensilesArray.includes(item)
+        });
+
+        if(allUstensilesIncluded) {
+            return dish;
+        }
+    })
+
+    return dishList
 }
 
 //get ingredients from listed dish
