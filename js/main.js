@@ -116,6 +116,12 @@ window.addEventListener('click', function(e) {
 
         document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('hidden');
         document.querySelector(`p[data-value="${filterText}"]`).closest('div').classList.add('tagged');
+
+        //hide the chosen filter
+        document.querySelectorAll('.search-filter-tag').forEach(tag => {
+            document.querySelector(`.clickable#${tag.id}`).closest('div').classList.add('hidden');
+            document.querySelector(`.clickable#${tag.id}`).closest('div').classList.add('tagged');
+        });
     }
 });
 
@@ -242,7 +248,6 @@ function emptyDropDownSearchText(exceptElement) {
     if(exceptElement !== "appareils") {
         document.querySelector('.drop-down-filter.drop-down-success input').value = ""
     }
-
 
     if(exceptElement !== "ustensiles") {
         document.querySelector('.drop-down-filter.drop-down-danger input').value = ""
