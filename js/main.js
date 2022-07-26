@@ -546,7 +546,7 @@ function toggleDropDownFilter(event, element) {
 function searchInDishes(search, dishList) {
     let data = dishList.length === 0 ? dishes : dishList;
 
-    let founded = data.filter(dish => {
+    return data.filter(dish => {
         let dishName = dish.name,
             dishDescription = dish.description,
             dishIngredients = dish.ingredients;
@@ -568,8 +568,6 @@ function searchInDishes(search, dishList) {
             return dish
         }
     });
-
-    return founded
 }
 
 function renderDishesFilter(dishes) {
