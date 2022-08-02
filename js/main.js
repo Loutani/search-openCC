@@ -522,7 +522,7 @@ function getCompatibledishWithFilters() {
             return dish
         }
 
-        let dishIngredientArray = dish.ingredients.map(ingredient => ingredient.ingredient);
+        let dishIngredientArray = dish.ingredients.map(ingredient => makeFirstCharacterUpperCase(ingredient.ingredient.toLowerCase()));
 
         let allIngredientIncluded = chosenFilters.ingredients.every(item => {
             return dishIngredientArray.includes(item)
